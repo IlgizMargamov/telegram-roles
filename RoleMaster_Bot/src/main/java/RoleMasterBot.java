@@ -11,7 +11,6 @@ import java.util.ArrayList;
 
 public class RoleMasterBot extends TelegramLongPollingBot {
     private final ArrayList<NamedArrayList<String>> roles = new ArrayList<>();
-    private final String botUsernameWithOffsetForFollowingCommand = "@RolemASSter_bot ";
     private static Boolean awaitingReplyWithRoleName= false;
 
     @Override
@@ -35,8 +34,8 @@ public class RoleMasterBot extends TelegramLongPollingBot {
                         e.printStackTrace();
                     }
 
-                };
-                roles.add(new NamedArrayList<String>(roleName));
+                }
+                roles.add(new NamedArrayList<>(roleName));
                 SendMessage sendMessage= SendMessage
                         .builder()
                         .chatId(chatId)
@@ -49,6 +48,7 @@ public class RoleMasterBot extends TelegramLongPollingBot {
                     e.printStackTrace();
                 }
             }
+            String botUsernameWithOffsetForFollowingCommand = "@RolemASSter_bot ";
             if (messageText.startsWith(botUsernameWithOffsetForFollowingCommand)){
                 String[] splitMessage = messageText.split(" ");
                 String command = splitMessage[1];
@@ -56,22 +56,26 @@ public class RoleMasterBot extends TelegramLongPollingBot {
                 if (command.equals("help")){
                     SendMessage sendMessage = new SendMessage();
                     sendMessage.setChatId(chatId);
-                    sendMessage.setText("This bot helps you tag people of certain role\n" +
-                            "To add a role, send:\n" +
-                            "@RolemASSter_bot new_role <ROLE_NAME>\n" +
-                            "No restrictions implied\n\n" +
-                            "To show existing roles, send:\n" +
-                            "@RolemASSter_bot show_roles\n\n" +
-                            "To add users to a role, send:\n" +
-                            "@RolemASSter_bot add_users <ROLE_NAME> [USERNAME1 USERNAME2..]\n" +
-                            "You might add any number of users to role.\n" +
-                            "Username format: @username\n" +
-                            "Also you might send:\n" +
-                            "@RolemASSter_bot add_users +<ROLE_NAME> [USERNAME1 USERNAME2..]\n" +
-                            "+ will be omitted in rolename\n\n" +
-                            "To tag group of users by role, send:\n" +
-                            "@RolemASSter_bot tag_users <ROLE_NAME>\n" +
-                            "");
+                    sendMessage.setText("""
+                            This bot helps you tag people of certain role
+                            To add a role, send:
+                            @RolemASSter_bot new_role <ROLE_NAME>
+                            No restrictions implied
+
+                            To show existing roles, send:
+                            @RolemASSter_bot show_roles
+
+                            To add users to a role, send:
+                            @RolemASSter_bot add_users <ROLE_NAME> [USERNAME1 USERNAME2..]
+                            You might add any number of users to role.
+                            Username format: @username
+                            Also you might send:
+                            @RolemASSter_bot add_users +<ROLE_NAME> [USERNAME1 USERNAME2..]
+                            + will be omitted in rolename
+
+                            To tag group of users by role, send:
+                            @RolemASSter_bot tag_users <ROLE_NAME>
+                            """);
                     try {
                         execute(sendMessage);
                     } catch (TelegramApiException e) {
@@ -114,7 +118,7 @@ public class RoleMasterBot extends TelegramLongPollingBot {
                                 e.printStackTrace();
                             }
 
-                        };
+                        }
                         roles.add(new NamedArrayList<>(roleName));
                         SendMessage sendMessage= SendMessage
                                 .builder()
@@ -140,7 +144,6 @@ public class RoleMasterBot extends TelegramLongPollingBot {
                                 SendMessage sendMessage = new SendMessage();
                                 sendMessage.setChatId(chatId);
                                 StringBuilder stringBuilder = new StringBuilder();
-                                int keyWords = 3;
                                 for (String user : currentRole) {
                                     stringBuilder.append(user);
                                     stringBuilder.append(" ");
