@@ -83,7 +83,16 @@ public class RoleMasterBot extends TelegramLongPollingBot {
                     }
 
                     String userName = update.getMessage().getFrom().getUserName();
-                    chatAll.get(chatId).add("@"+userName);
+                    if(!chatAll.get(chatId).contains("@"+userName)){
+                        chatAll.get(chatId).add("@"+userName);
+                    }
+
+                    SendMessage sendMessage = SendMessage.builder().chatId(chatId).text("@"+userName+" hi!").build();
+                    try {
+                        execute(sendMessage);
+                    } catch (TelegramApiException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 if (command.equals("help")){
