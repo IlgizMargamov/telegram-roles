@@ -223,11 +223,6 @@ public class RoleMasterBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        try {
-            return Files.readString(Path.of(System.getProperty("user.dir") + "\\token.txt"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "";
+        return System.getenv("BOT_TOKEN");
     }
 }
