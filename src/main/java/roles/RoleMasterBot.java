@@ -10,16 +10,38 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class RoleMasterBot extends TelegramLongPollingBot {
     private final ArrayList<NamedArrayList<String>> roles = new ArrayList<>();
+    private final Map<Long, List<String>> chatAll = new HashMap<>();
     private static Boolean awaitingReplyWithRoleName= false;
+    private static final String all ="@all";
 
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()){
             String messageText = update.getMessage().getText();
             Long chatId = update.getMessage().getChatId();
+            if (update.getMessage().hasText()){
+                if (update.getMessage().getText().contains(all)){
+                    var allUsers = chatAll.get(update.getMessage().getChatId());
+                    var all = new StringBuilder();
+                    for (var i : allUsers){
+                        all.append(i+" ");
+                    }
+
+                    SendMessage sendMessage = SendMessage.builder().chatId(chatId).text(all.toString()).build();
+                    try {
+                        execute(sendMessage);
+                    }
+                    catch (TelegramApiException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
             if (update.getMessage().isReply() && awaitingReplyWithRoleName){
                 awaitingReplyWithRoleName = false;
                 String roleName = update.getMessage().getText().split(" ")[0];
@@ -54,6 +76,15 @@ public class RoleMasterBot extends TelegramLongPollingBot {
             if (messageText.startsWith(botUsernameWithOffsetForFollowingCommand)){
                 String[] splitMessage = messageText.split(" ");
                 String command = splitMessage[1];
+
+                if (command.equals("hi")){
+                    if (chatAll.get(chatId) == null){
+                        chatAll.putIfAbsent(chatId, new ArrayList<>());
+                    }
+
+                    String userName = update.getMessage().getFrom().getUserName();
+                    chatAll.get(chatId).add("@"+userName);
+                }
 
                 if (command.equals("help")){
                     SendMessage sendMessage = new SendMessage();
